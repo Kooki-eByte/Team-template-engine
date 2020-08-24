@@ -13,12 +13,13 @@ const render = require("./lib/htmlRenderer");
 // Write code to use inquirer to gather information about the development team members,
 // and to create objects for each team member (using the correct classes as blueprints!)
 
+// Questions for the team manager
 inquirer
   .prompt([
     {
       type: "input",
       name: "name",
-      message: "What is your name?",
+      message: "Hello Team Manager, What is your name?",
     },
     {
       type: "input",
@@ -30,13 +31,22 @@ inquirer
       name: "email",
       message: "What is your email?",
     },
+    {
+      type: "input",
+      name: "count",
+      message: "How many people are in your team?",
+    },
   ])
   .then((answer) => {
-    console.log(
-      `
-        Hello there ${answer.name}, your id number is ${answer.id}, and you have a email of ${answer.email}
-        `
-    );
+    // Catch a few errors that may occur and end the process before it gets to crazy
+    if (!Number.isInteger(parseInt(answer.count))) {
+      console.log("Sorry please have it be a actually integar!");
+      process.exit();
+    } else if (parseInt(answer.count) <= 0) {
+      console.log("Sorry please have the number be higher than 0!");
+      process.exit();
+    } else {
+    }
   });
 
 // After the user has input all employees desired, call the `render` function (required
