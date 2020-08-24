@@ -9,6 +9,61 @@ const OUTPUT_DIR = path.resolve(__dirname, "output");
 const outputPath = path.join(OUTPUT_DIR, "team.html");
 
 const render = require("./lib/htmlRenderer");
+const team = [];
+
+function getTeamMembers() {
+  console.log("Team", team);
+
+  inquirer
+    .prompt([
+      {
+        type: "input",
+        name: "name",
+        message: "What is the employees name?",
+      },
+      {
+        type: "input",
+        name: "id",
+        message: "What is your id number?",
+      },
+      {
+        type: "input",
+        name: "email",
+        message: "What is your email?",
+      },
+      {
+        type: "list",
+        name: "role",
+        message: "What role is this emplyee?",
+        choices: ["Intern", "Engineer"],
+      },
+      {
+        type: "confirm",
+        name: "isMore",
+        message: "Is there another employee you want to add?",
+      },
+    ])
+    .then((answer) => {
+      switch (answer.role) {
+        case "Intern":
+          console.log("Made intern obj");
+          answer.isMore
+            ? getTeamMembers()
+            : console.log("Okay making html for you now");
+          break;
+
+        case "Engineer":
+          console.log("Made Engineer obj");
+          answer.isMore
+            ? getTeamMembers()
+            : console.log("Okay making html for you now");
+          break;
+
+        default:
+          console.log("Invalid info please try again");
+      }
+    });
+}
 
 // Write code to use inquirer to gather information about the development team members,
 // and to create objects for each team member (using the correct classes as blueprints!)
@@ -33,19 +88,32 @@ inquirer
     },
     {
       type: "input",
-      name: "count",
-      message: "How many people are in your team?",
+      name: "office",
+      message: "What is your office number?",
     },
   ])
   .then((answer) => {
     // Catch a few errors that may occur and end the process before it gets to crazy
-    if (!Number.isInteger(parseInt(answer.count))) {
-      console.log("Sorry please have it be a actually integar!");
+    if (
+      !Number.isInteger(parseInt(answer.id)) ||
+      !Number.isInteger(parseInt(answer.office))
+    ) {
+      console.log(
+        "Sorry please have either id or office number to be a actually numeral!"
+      );
       process.exit();
-    } else if (parseInt(answer.count) <= 0) {
+    } else if (parseInt(answer.count) <= 0 || parseInt(answer.office) <= 0) {
       console.log("Sorry please have the number be higher than 0!");
       process.exit();
     } else {
+      let manager = new Manager(
+        answer.name,
+        answer.id,
+        answer.email,
+        answer.office
+      );
+      team.push(manager);
+      getTeamMembers();
     }
   });
 
