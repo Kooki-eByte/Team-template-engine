@@ -23,8 +23,6 @@ function makeHtml() {
 // Write code to use inquirer to gather information about the development team members,
 // and to create objects for each team member (using the correct classes as blueprints!)
 function getTeamMembers() {
-  console.log("Team", team);
-
   inquirer
     .prompt([
       {
