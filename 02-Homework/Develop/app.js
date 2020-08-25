@@ -11,6 +11,17 @@ const outputPath = path.join(OUTPUT_DIR, "team.html");
 const render = require("./lib/htmlRenderer");
 const team = [];
 
+function makeHtml() {
+  let html = render(team);
+
+  fs.writeFile(outputPath, html, (err) => {
+    if (err) throw err;
+    return "Your template has been saved";
+  });
+}
+
+// Write code to use inquirer to gather information about the development team members,
+// and to create objects for each team member (using the correct classes as blueprints!)
 function getTeamMembers() {
   console.log("Team", team);
 
@@ -38,25 +49,46 @@ function getTeamMembers() {
         choices: ["Intern", "Engineer"],
       },
       {
+        type: "input",
+        name: "school",
+        message: "If you picked Intern, What school are you in?",
+      },
+      {
+        type: "input",
+        name: "github",
+        message: "If you picked Engineer, what is your github username?",
+      },
+      {
         type: "confirm",
         name: "isMore",
         message: "Is there another employee you want to add?",
       },
     ])
     .then((answer) => {
+      // After the user has input all employees desired, call the `render` function (required
+      // above) and pass in an array containing all employee objects; the `render` function will
+      // generate and return a block of HTML including templated divs for each employee!
       switch (answer.role) {
         case "Intern":
-          console.log("Made intern obj");
-          answer.isMore
-            ? getTeamMembers()
-            : console.log("Okay making html for you now");
+          let intern = new Intern(
+            answer.name,
+            answer.id,
+            answer.email,
+            answer.school
+          );
+          team.push(intern);
+          answer.isMore ? getTeamMembers() : makeHtml();
           break;
 
         case "Engineer":
-          console.log("Made Engineer obj");
-          answer.isMore
-            ? getTeamMembers()
-            : console.log("Okay making html for you now");
+          let engineer = new Engineer(
+            answer.name,
+            answer.id,
+            answer.email,
+            answer.github
+          );
+          team.push(engineer);
+          answer.isMore ? getTeamMembers() : makeHtml();
           break;
 
         default:
@@ -64,9 +96,6 @@ function getTeamMembers() {
       }
     });
 }
-
-// Write code to use inquirer to gather information about the development team members,
-// and to create objects for each team member (using the correct classes as blueprints!)
 
 // Questions for the team manager
 inquirer
@@ -116,10 +145,6 @@ inquirer
       getTeamMembers();
     }
   });
-
-// After the user has input all employees desired, call the `render` function (required
-// above) and pass in an array containing all employee objects; the `render` function will
-// generate and return a block of HTML including templated divs for each employee!
 
 // After you have your html, you're now ready to create an HTML file using the HTML
 // returned from the `render` function. Now write it to a file named `team.html` in the
